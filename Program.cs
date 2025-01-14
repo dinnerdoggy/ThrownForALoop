@@ -51,19 +51,23 @@ for (int i = 0; i < products.Count; i++)
     Console.WriteLine($"{i + 1}. {products[i].Name}");
 }
 
-Console.WriteLine("Please enter a product number: ");
+Product chosenProduct = null;
 
-int response = int.Parse(Console.ReadLine().Trim());
-
-while (response > products.Count || response < 1)
+while (chosenProduct == null)
 {
-    Console.WriteLine("Choose a number between 1 and 5!");
-    response = int.Parse(Console.ReadLine().Trim());
+    Console.WriteLine("Please enter a product number: ");
+    try
+    {
+        int response = int.Parse(Console.ReadLine().Trim());
+        chosenProduct = products[response - 1];
+    }
+    catch
+    {
+        Console.WriteLine("\nImproper format...\n");
+    }
 }
 
 DateTime now = DateTime.Now;
-
-Product chosenProduct = products[response - 1];
 
 TimeSpan timeInStock = now - chosenProduct.StockDate;
 Console.WriteLine($@"You chose:
