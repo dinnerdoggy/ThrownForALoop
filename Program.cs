@@ -8,28 +8,41 @@ List<Product> products = new List<Product>()
     new Product()
     {
         Name = "Football",
-        Price = 15,
+        Price = 15.00M,
         Sold = false,
         StockDate = new DateTime(2022, 10, 20),
-        ManufactureYear = 2010
+        ManufactureYear = 2010,
+        Condition = 4.2
     },
     new Product()
     {
         Name = "Hockey Stick",
-        Price = 12,
+        Price = 12.00m,
         Sold = false,
         StockDate = new DateTime(2024, 12, 25),
-        ManufactureYear = 2020
+        ManufactureYear = 2020,
+        Condition = 4.5
     },
     new Product()
     {
         Name = "Chest Piece",
-        Price = 545,
+        Price = 545.35m,
         Sold = false,
         StockDate = new DateTime(2015, 10, 20),
-        ManufactureYear = 2005
+        ManufactureYear = 2005,
+        Condition = 5.0
     }
 };
+
+decimal totalValue = 0.0M;
+foreach (Product product in products)
+{
+    if (!product.Sold)
+    {
+        totalValue += product.Price;
+    }
+}
+Console.WriteLine($"Total inventory value: ${totalValue}");
 
 Console.WriteLine("Products:");
 
