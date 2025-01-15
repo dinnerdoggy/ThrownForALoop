@@ -3,20 +3,141 @@ Your one-stop shop for used sporting equipment";
 
 Console.WriteLine(greeting);
 
-Console.WriteLine(@"Products:
-1. Football
-2. Hockey Stick
-3. Boomerang
-4. Frisbee
-5. Golf Putter");
-Console.WriteLine("Please enter a product number: ");
-
-string response = Console.ReadLine().Trim();
-
-while (string.IsNullOrEmpty(response))
+List<Product> products = new List<Product>()
 {
-    Console.WriteLine("You didn't choose anything, try again!");
-    response = Console.ReadLine().Trim();
+    new Product()
+    {
+        Name = "Football",
+        Price = 15.00M,
+        Sold = false,
+        StockDate = new DateTime(2022, 10, 20),
+        ManufactureYear = 2010,
+        Condition = 4.2
+    },
+    new Product()
+    {
+        Name = "Hockey Stick",
+        Price = 12.00m,
+        Sold = true,
+        StockDate = new DateTime(2025, 1, 8),
+        ManufactureYear = 2020,
+        Condition = 4.5
+    },
+    new Product()
+    {
+        Name = "Chest Piece",
+        Price = 545.35m,
+        Sold = false,
+        StockDate = new DateTime(2025, 01, 10),
+        ManufactureYear = 2005,
+        Condition = 5.0
+    }
+};
+
+string choice = null;
+while (choice != "0")
+{
+    Console.WriteLine(@"Choose an option:
+                        0. Exit
+                        1. View All Products
+                        2. View Product Details
+                        3. View Latest Products");
+    choice = Console.ReadLine();
+    if (choice == "0")
+    {
+        Console.WriteLine("Goodbye!");
+    }
+    else if (choice == "1")
+    {
+        ListProducts();
+    }
+    else if (choice == "2")
+    {
+        ViewProductDetails();
+    }
+    else if (choice == "3")
+    {
+        ViewLatestProducts();
+    }
 }
 
-Console.WriteLine($"You chose: {response}");
+void ViewLatestProducts()
+{
+    // create a new empty List to store the latest products
+    List<Product> latestProducts = new List<Product>();
+    // Calculate a DateTime 90 days in the past
+    DateTime threeMonthsAgo = DateTime.Now - TimeSpan.FromDays(90);
+    //loop through the products
+    foreach (Product product in products)
+    {
+        //Add a product to latestProducts if it fits the criteria
+        if (product.StockDate > threeMonthsAgo && !product.Sold)
+        {
+            latestProducts.Add(product);
+        }
+    }
+    // print out the latest products to the console 
+    for (int i = 0; i < latestProducts.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {latestProducts[i].Name}");
+    }
+}
+
+
+
+void ViewProductDetails()
+{
+
+    ListProducts();
+
+    Product chosenProduct = null;
+
+    while (chosenProduct == null)
+    {
+        Console.WriteLine("Please enter a product number: ");
+        try
+        {
+            int response = int.Parse(Console.ReadLine().Trim());
+            chosenProduct = products[response - 1];
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please type only integers!");
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            Console.WriteLine("Please choose an existing item only!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            Console.WriteLine("Do Better!");
+        }
+    }
+
+    DateTime now = DateTime.Now;
+
+    TimeSpan timeInStock = now - chosenProduct.StockDate;
+    Console.WriteLine($@"You chose:
+{chosenProduct.Name}, which costs {chosenProduct.Price} dollars.
+It is {now.Year - chosenProduct.ManufactureYear} years old.
+it {(chosenProduct.Sold ? "is not available." : $"has been in stock for {timeInStock.Days} days.")}");
+
+}
+    void ListProducts()
+    {
+        decimal totalValue = 0.0M;
+        foreach (Product product in products)
+        {
+            if (!product.Sold)
+            {
+                totalValue += product.Price;
+            }
+        }
+        Console.WriteLine($"Total inventory value: ${totalValue}");
+        Console.WriteLine("Products:");
+        for (int i = 0; i < products.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {products[i].Name}");
+        }
+    }
