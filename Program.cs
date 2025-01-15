@@ -18,8 +18,8 @@ List<Product> products = new List<Product>()
     {
         Name = "Hockey Stick",
         Price = 12.00m,
-        Sold = false,
-        StockDate = new DateTime(2024, 12, 25),
+        Sold = true,
+        StockDate = new DateTime(2025, 1, 8),
         ManufactureYear = 2020,
         Condition = 4.5
     },
@@ -28,58 +28,116 @@ List<Product> products = new List<Product>()
         Name = "Chest Piece",
         Price = 545.35m,
         Sold = false,
-        StockDate = new DateTime(2015, 10, 20),
+        StockDate = new DateTime(2025, 01, 10),
         ManufactureYear = 2005,
         Condition = 5.0
     }
 };
 
-decimal totalValue = 0.0M;
-foreach (Product product in products)
+string choice = null;
+while (choice != "0")
 {
-    if (!product.Sold)
+    Console.WriteLine(@"Choose an option:
+                        0. Exit
+                        1. View All Products
+                        2. View Product Details
+                        3. View Latest Products");
+    choice = Console.ReadLine();
+    if (choice == "0")
     {
-        totalValue += product.Price;
+        Console.WriteLine("Goodbye!");
     }
-}
-Console.WriteLine($"Total inventory value: ${totalValue}");
-
-Console.WriteLine("Products:");
-
-for (int i = 0; i < products.Count; i++)
-{
-    Console.WriteLine($"{i + 1}. {products[i].Name}");
-}
-
-Product chosenProduct = null;
-
-while (chosenProduct == null)
-{
-    Console.WriteLine("Please enter a product number: ");
-    try
+    else if (choice == "1")
     {
-        int response = int.Parse(Console.ReadLine().Trim());
-        chosenProduct = products[response - 1];
+        ListProducts();
     }
-    catch (FormatException)
+    else if (choice == "2")
     {
-        Console.WriteLine("Please type only integers!");
+        ViewProductDetails();
     }
-    catch (ArgumentOutOfRangeException)
+    else if (choice == "3")
     {
-        Console.WriteLine("Please choose an existing item only!");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex);
-        Console.WriteLine("Do Better!");
+        ViewLatestProducts();
     }
 }
 
-DateTime now = DateTime.Now;
+void ViewLatestProducts()
+{
+    // create a new empty List to store the latest products
+    List<Product> latestProducts = new List<Product>();
+    // Calculate a DateTime 90 days in the past
+    DateTime threeMonthsAgo = DateTime.Now - TimeSpan.FromDays(90);
+    //loop through the products
+    foreach (Product product in products)
+    {
+        //Add a product to latestProducts if it fits the criteria
+        if (product.StockDate > threeMonthsAgo && !product.Sold)
+        {
+            latestProducts.Add(product);
+        }
+    }
+    // print out the latest products to the console 
+    for (int i = 0; i < latestProducts.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {latestProducts[i].Name}");
+    }
+}
 
-TimeSpan timeInStock = now - chosenProduct.StockDate;
-Console.WriteLine($@"You chose:
+
+
+void ViewProductDetails()
+{
+
+    ListProducts();
+
+    Product chosenProduct = null;
+
+    while (chosenProduct == null)
+    {
+        Console.WriteLine("Please enter a product number: ");
+        try
+        {
+            int response = int.Parse(Console.ReadLine().Trim());
+            chosenProduct = products[response - 1];
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please type only integers!");
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            Console.WriteLine("Please choose an existing item only!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            Console.WriteLine("Do Better!");
+        }
+    }
+
+    DateTime now = DateTime.Now;
+
+    TimeSpan timeInStock = now - chosenProduct.StockDate;
+    Console.WriteLine($@"You chose:
 {chosenProduct.Name}, which costs {chosenProduct.Price} dollars.
 It is {now.Year - chosenProduct.ManufactureYear} years old.
 it {(chosenProduct.Sold ? "is not available." : $"has been in stock for {timeInStock.Days} days.")}");
+
+}
+    void ListProducts()
+    {
+        decimal totalValue = 0.0M;
+        foreach (Product product in products)
+        {
+            if (!product.Sold)
+            {
+                totalValue += product.Price;
+            }
+        }
+        Console.WriteLine($"Total inventory value: ${totalValue}");
+        Console.WriteLine("Products:");
+        for (int i = 0; i < products.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {products[i].Name}");
+        }
+    }
